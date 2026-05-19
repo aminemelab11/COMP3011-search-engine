@@ -18,7 +18,7 @@ logging.basicConfig(
 
 class WebCrawler:
     """
-    Crawls quotes.toscrape.com and extracts page text.
+    Crawls quotes.toscrape.com and extracts meaningful quote content.
     """
 
     def __init__(self, base_url=BASE_URL, delay=REQUEST_DELAY):
@@ -44,40 +44,37 @@ class WebCrawler:
             return None
 
     def extract_page_text(self, html):
-    """
-    Extract meaningful quote and author text from HTML.
-    """
-
-    soup = BeautifulSoup(html, "html.parser")
-
-    quote_blocks = soup.select("div.quote")
-
-    extracted_content = []
-
-    for quote in quote_blocks:
-
-        quote_text = quote.select_one("span.text")
-        author = quote.select_one("small.author")
-        tags = quote.select("div.tags a.tag")
-
-        if quote_text:
-            extracted_content.append(quote_text.get_text(strip=True))
-
-        if author:
-            extracted_content.append(author.get_text(strip=True))
-
-        for tag in tags:
-            extracted_content.append(tag.get_text(strip=True))
-
-    return " ".join(extracted_content)
-
-    def get_next_page(self, html, current_url):
         """
-        Find next page URL from pagination.
+        Extract meaningful quote, author, and tag text from HTML.
         """
 
         soup = BeautifulSoup(html, "html.parser")
 
+        quote_blocks = soup.select("div.quote")
+        extracted_content = []
+
+        for quote in quote_blocks:
+            quote_text = quote.select_one("span.text")
+            author = quote.select_one("small.author")
+            tags = quote.select("div.tags a.tag")
+
+            if quote_text:
+                extracted_content.append(quote_text.get_text(strip=True))
+
+            if author:
+                extracted_content.append(author.get_text(strip=True))
+
+            for tag in tags:
+                extracted_content.append(tag.get_text(strip=True))
+
+        return " ".join(extracted_content)
+
+    def get_next_page(self, html, current_url):
+        """
+        Find the next page URL from pagination.
+        """
+
+        soup = BeautifulSoup(html, "html.parser")
         next_button = soup.select_one("li.next a")
 
         if next_button:
@@ -88,15 +85,15 @@ class WebCrawler:
 
     def crawl(self):
         """
-        Crawl all pages starting from base URL.
+        Crawl all quote pages starting from the base URL.
         """
 
         current_url = self.base_url
         crawled_pages = {}
 
         while current_url:
-
             if current_url in self.visited_urls:
+                logging.warning(f"Already visited {current_url}. Stopping crawl.")
                 break
 
             logging.info(f"Crawling page: {current_url}")
@@ -104,10 +101,10 @@ class WebCrawler:
             html = self.fetch_page(current_url)
 
             if html is None:
+                logging.error("Stopping crawl because page could not be fetched.")
                 break
 
             page_text = self.extract_page_text(html)
-
             crawled_pages[current_url] = page_text
 
             self.visited_urls.add(current_url)
@@ -122,8 +119,6 @@ class WebCrawler:
 
             current_url = next_page
 
-        logging.info(
-            f"Finished crawling {len(crawled_pages)} pages."
-        )
+        logging.info(f"Finished crawling {len(crawled_pages)} pages.")
 
         return crawled_pages
