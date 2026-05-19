@@ -44,15 +44,32 @@ class WebCrawler:
             return None
 
     def extract_page_text(self, html):
-        """
-        Extract clean text from HTML.
-        """
+    """
+    Extract meaningful quote and author text from HTML.
+    """
 
-        soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "html.parser")
 
-        text = soup.get_text(separator=" ", strip=True)
+    quote_blocks = soup.select("div.quote")
 
-        return text
+    extracted_content = []
+
+    for quote in quote_blocks:
+
+        quote_text = quote.select_one("span.text")
+        author = quote.select_one("small.author")
+        tags = quote.select("div.tags a.tag")
+
+        if quote_text:
+            extracted_content.append(quote_text.get_text(strip=True))
+
+        if author:
+            extracted_content.append(author.get_text(strip=True))
+
+        for tag in tags:
+            extracted_content.append(tag.get_text(strip=True))
+
+    return " ".join(extracted_content)
 
     def get_next_page(self, html, current_url):
         """
