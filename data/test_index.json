@@ -1,0 +1,11 @@
+{
+  "life": {
+    "https://example.com": {
+      "frequency": 2,
+      "positions": [
+        1,
+        5
+      ]
+    }
+  }
+}
