@@ -202,14 +202,12 @@ to reduce irrelevant page noise during indexing.
 
 # GenAI Use
 
-Generative AI was used as a support tool during development for:
+Generative AI tools were used during development for architectural planning, implementation support, debugging assistance, code review, and improving automated testing.
 
-- planning architecture
-- debugging
-- reviewing code structure
-- improving automated tests
-- refining edge-case handling
+AI assistance was particularly useful when developing the crawler workflow, refining the inverted index structure, improving query-processing logic, and identifying additional edge cases for testing.
 
-All generated suggestions were reviewed, modified where necessary, tested manually and automatically, and fully understood before inclusion in the final submission.
+However, all generated suggestions were critically evaluated, manually tested, modified where necessary, and fully understood before integration into the final implementation.
+
+Overall, Generative AI accelerated development and testing workflows while still requiring manual debugging, validation, and software engineering decisions throughout the project.
 
 A full critical reflection on GenAI use is included in the video demonstration.
